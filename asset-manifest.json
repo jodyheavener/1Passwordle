@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/1Passwordle/static/css/main.3e8e06e4.css",
-    "main.js": "/1Passwordle/static/js/main.90862004.js",
+    "main.css": "/1Passwordle/static/css/main.01b047b4.css",
+    "main.js": "/1Passwordle/static/js/main.157d8d95.js",
     "static/media/averta-op-bold-v1.woff": "/1Passwordle/static/media/averta-op-bold-v1.d2c3c61738d5909525b5.woff",
     "static/media/averta-op-regular-v1.woff": "/1Passwordle/static/media/averta-op-regular-v1.bf74cd258ac55684979e.woff",
     "static/media/averta-op-semibold-v1.woff": "/1Passwordle/static/media/averta-op-semibold-v1.d0998492e74aadbe6265.woff",
@@ -13,11 +13,12 @@
     "static/media/logo-dark.svg": "/1Passwordle/static/media/logo-dark.6197a11ca53d9fef01bae4c5ce05ac8f.svg",
     "static/media/logo-light.svg": "/1Passwordle/static/media/logo-light.d6aa8093962218561b0efd708dbeb788.svg",
     "index.html": "/1Passwordle/index.html",
-    "main.3e8e06e4.css.map": "/1Passwordle/static/css/main.3e8e06e4.css.map",
-    "main.90862004.js.map": "/1Passwordle/static/js/main.90862004.js.map"
+    "static/media/backspace.svg": "/1Passwordle/static/media/backspace.42a9f2cba1c036f8045e82f54a48534c.svg",
+    "main.01b047b4.css.map": "/1Passwordle/static/css/main.01b047b4.css.map",
+    "main.157d8d95.js.map": "/1Passwordle/static/js/main.157d8d95.js.map"
   },
   "entrypoints": [
-    "static/css/main.3e8e06e4.css",
-    "static/js/main.90862004.js"
+    "static/css/main.01b047b4.css",
+    "static/js/main.157d8d95.js"
   ]
 }
