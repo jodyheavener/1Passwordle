@@ -7,7 +7,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "predeploy": "yarn build",
+    "predeploy": "PUBLIC_URL=/1Passwordle yarn build",
     "deploy": "gh-pages -d build"
   },
   "eslintConfig": {

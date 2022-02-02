@@ -7,13 +7,13 @@ const Board = () => {
 
   return (
     <div
-      className="w-full max-w-md mx-auto flex flex-col flex-auto"
+      className="w-full max-w-md mx-auto flex flex-col flex-auto my-4"
       style={{ maxHeight: '60vh' }}
     >
       {rows.map((row, rowIndex) => (
         <div
           key={rowIndex}
-          className="flex flex-row flex-1 justify-between my-1 md:my-1.5 px-2 md:px-0 relative"
+          className="flex flex-row flex-1 justify-between my-1 md:my-1.5 px-12 md:px-0 relative"
         >
           {row.map((tile, tileIndex) => (
             <React.Fragment key={`${rowIndex}-${tileIndex}`}>

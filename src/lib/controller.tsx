@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react';
 import { ROWS_COUNT, TILES_COUNT } from './constants';
+import useLocalStorage from './storage';
 
 export enum TileState {
   Empty,
@@ -44,53 +45,6 @@ const defaultRows = Array.from({ length: ROWS_COUNT }, () =>
   )
 );
 
-// Some example tiles used for testing
-//
-// const defaultRows = [
-//   [
-//     { state: TileState.Exact, character: 's' },
-//     { state: TileState.Hidden, character: 't' },
-//     { state: TileState.Hidden, character: 'o' },
-//     { state: TileState.Present, character: 'r' },
-//     { state: TileState.Hidden, character: 'e' },
-//   ],
-//   [
-//     { state: TileState.Exact, character: 'a' },
-//     { state: TileState.Absent, character: 'w' },
-//     { state: TileState.Absent, character: 'a' },
-//     { state: TileState.Present, character: 'r' },
-//     { state: TileState.Absent, character: 'd' },
-//   ],
-//   [
-//     { state: TileState.Present, character: 's' },
-//     { state: TileState.Exact, character: 'a' },
-//     { state: TileState.Absent, character: 'f' },
-//     { state: TileState.Absent, character: 'e' },
-//     { state: TileState.Present, character: 'r' },
-//   ],
-//   [
-//     { state: TileState.Submitted, character: 'v' },
-//     { state: TileState.Submitted, character: 'a' },
-//     { state: TileState.Submitted, character: 'l' },
-//     { state: TileState.Empty },
-//     { state: TileState.Empty },
-//   ],
-//   [
-//     { state: TileState.Empty },
-//     { state: TileState.Empty },
-//     { state: TileState.Empty },
-//     { state: TileState.Empty },
-//     { state: TileState.Empty },
-//   ],
-//   [
-//     { state: TileState.Empty },
-//     { state: TileState.Empty },
-//     { state: TileState.Empty },
-//     { state: TileState.Empty },
-//     { state: TileState.Empty },
-//   ],
-// ];
-
 const defaultControllerData: ControllerDataType = {
   gameState: GameState.Active,
   activeTile: [0, 0],
@@ -113,32 +67,76 @@ export const ControllerContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [gameState, setGameState] = useState<GameState>(GameState.Active);
-  const [activeTile, setActiveTile] = React.useState<
-    ControllerDataType['activeTile']
-  >(defaultControllerData.activeTile);
-  const [rows, setRows] = React.useState<ControllerDataType['rows']>(
+  const [storedGameState, setStoredGameState] = useLocalStorage(
+    'game-state',
+    GameState.Active
+  );
+  const [storedActiveTile, setStoredActiveTile] = useLocalStorage(
+    'active-tile',
+    defaultControllerData.activeTile
+  );
+  const [storedRows, setStoredRows] = useLocalStorage(
+    'rows-data',
     defaultControllerData.rows
+  );
+
+  const [gameState, setGameState] =
+    useState<ControllerDataType['gameState']>(storedGameState);
+  const [activeTile, setActiveTile] =
+    React.useState<ControllerDataType['activeTile']>(storedActiveTile);
+  const [rows, setRows] =
+    React.useState<ControllerDataType['rows']>(storedRows);
+
+  const _setGameState = useCallback(
+    (newState: GameState) => {
+      setStoredGameState(newState);
+      setGameState(newState);
+    },
+    [setStoredGameState]
+  );
+
+  const _setActiveTile = useCallback(
+    (newTile: ControllerDataType['activeTile']) => {
+      setStoredActiveTile(newTile);
+      setActiveTile(newTile);
+    },
+    [setStoredActiveTile]
+  );
+
+  const _setRows = useCallback(
+    (
+      newRows:
+        | ControllerDataType['rows']
+        | ((existing: ControllerDataType['rows']) => ControllerDataType['rows'])
+    ) => {
+      if (newRows instanceof Function) {
+        newRows = newRows(rows);
+      }
+
+      setStoredRows(newRows);
+      setRows(newRows);
+    },
+    [rows, setStoredRows]
   );
 
   const setRowTile = useCallback(
     (rowIndex: number, tileIndex: number, tile: TileType) =>
-      setRows((rows) => {
+      _setRows((rows) => {
         const newRows = [...rows];
         newRows[rowIndex][tileIndex] = tile;
         return newRows;
       }),
-    [setRows]
+    [_setRows]
   );
 
   return (
     <ControllerContext.Provider
       value={{
         gameState,
-        setGameState,
+        setGameState: _setGameState,
         activeTile,
         rows,
-        setActiveTile,
+        setActiveTile: _setActiveTile,
         setRowTile,
       }}
     >
