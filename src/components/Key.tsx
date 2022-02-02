@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import React from 'react';
+import { ReactComponent as BackspaceIcon } from '../images/backspace.svg';
 import { TileState } from '../lib/controller';
 
 const defaultClasses =
@@ -43,15 +44,18 @@ const Character = ({
   <button
     className={clsx(
       defaultClasses,
-      state === TileState.Absent && 'bg-grey-frost dark:bg-rhapsody-in-blue',
-      state === TileState.Present && 'bg-clementine dark:bg-clementine',
+      state === TileState.Absent && ' bg-opacity-30 dark:bg-rhapsody-in-blue',
+      state === TileState.Present &&
+        'bg-clementine dark:bg-clementine text-white',
       state === TileState.Exact &&
-        'bg-sonata-green-minor dark:bg-sonata-green-minor',
-      'text-xl md:text-2xl flex-1 mx-0.5 md:mx-1 py-3 '
+        'bg-sonata-green-minor dark:bg-sonata-green-minor text-white',
+      'text-xl md:text-2xl flex-1 mx-0.5 md:mx-1 py-3'
     )}
     onClick={() => onKeyActivated(character)}
   >
-    {character}
+    <span className={clsx(state === TileState.Absent && 'opacity-20')}>
+      {character}
+    </span>
   </button>
 );
 
@@ -79,7 +83,7 @@ const Backspace = ({
     )}
     onClick={onBackspace}
   >
-    ⌫
+    <BackspaceIcon className="w-6" />
   </button>
 );
 

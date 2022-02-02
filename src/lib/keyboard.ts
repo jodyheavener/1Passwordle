@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useConfig } from './config';
 import { ROWS_COUNT, TILES_COUNT } from './constants';
 import { GameState, TileState, TileType, useController } from './controller';
+import dictionary from './dictionary.json';
 
 const useKeyboard = () => {
   const { currentWord } = useConfig();
@@ -60,6 +61,11 @@ const useKeyboard = () => {
 
     if (gameState !== GameState.Active || !atEnd) {
       return;
+    }
+
+    const submittedWord = rowTiles.map((tile) => tile.character).join('');
+    if (!dictionary.includes(submittedWord)) {
+      return alert("Sorry, that's not a valid word.");
     }
 
     for (let index = 0; index < rowTiles.length; index++) {

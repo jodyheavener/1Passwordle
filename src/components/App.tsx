@@ -47,14 +47,18 @@ const AppPresentation = () => {
       <ControllerContextProvider>
         <Board />
         <Keyboard />
-        <Outcomes />
+        <Modals />
       </ControllerContextProvider>
     );
   }
 };
 
-const Outcomes = () => {
-  const { gameState } = useController();
+const Modals = () => {
+  const { gameState, initialized } = useController();
+
+  if (!initialized) {
+    return <WelcomeModal />;
+  }
 
   if (gameState === GameState.Won) {
     return <WonModal />;
@@ -65,6 +69,28 @@ const Outcomes = () => {
   return null;
 };
 
+const WelcomeModal = () => {
+  const { wordsRemaining } = useConfig();
+  const { setInitialized } = useController();
+
+  return (
+    <Modal>
+      <h2 className="font-semibold text-3xl mb-2">Welcome!</h2>
+      <p className="mt-2 mb-4">
+        You already know and love Wordle, so you should know what this is all
+        about. Each day, over the next <b>{wordsRemaining} days</b>, you can
+        solve a new 1Password-related word. Good luck!
+      </p>
+      <button
+        className="bg-white dark:bg-thalassophile text-kuretake-black-manga rounded-full text-lg font-semibold py-2 px-4 block w-full"
+        onClick={() => setInitialized(true)}
+      >
+        Start
+      </button>
+    </Modal>
+  );
+};
+
 const WonModal = () => {
   const { wordsRemaining } = useConfig();
 
@@ -73,8 +99,10 @@ const WonModal = () => {
       <h2 className="font-semibold text-3xl mb-2">You did it! 🎉</h2>
       <p>
         Congratulations on solving today's word. Don't forget to come back
-        tomorrow for the next word! There are still{' '}
-        <b>{wordsRemaining} words</b> left.
+        tomorrow for the next word!
+      </p>
+      <p className="mt-2">
+        There are still <b>{wordsRemaining} words</b> left.
       </p>
       <p className="mt-2 mb-4">Now you should head to the next puzzle:</p>
       <a
@@ -90,11 +118,14 @@ const WonModal = () => {
 };
 
 const LostModal = () => {
-  const { wordsRemaining } = useConfig();
+  const { wordsRemaining, currentWord } = useConfig();
   return (
     <Modal>
       <h2 className="font-semibold text-3xl mb-2">Sorry, you lost ☹️</h2>
-      <p>But don't worry - you can try again with tomorrow's word!</p>
+      <p>
+        We were looking for "<b>{currentWord.toUpperCase()}</b>". But don't
+        worry - you can try again with tomorrow's word!
+      </p>
       <p className="mt-2">
         There are still <b>{wordsRemaining} words</b> left.
       </p>

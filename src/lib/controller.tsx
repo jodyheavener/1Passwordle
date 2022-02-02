@@ -27,12 +27,14 @@ export type RowTileType = [row: number, tile: number];
 type RowType = TileType[];
 
 type ControllerDataType = {
+  initialized: boolean;
   gameState: GameState;
   activeTile: RowTileType;
   rows: RowType[];
 };
 
 type ControllerActionsType = {
+  setInitialized: (initialized: boolean) => void;
   setGameState: (state: GameState) => void;
   setActiveTile: (activeTile: RowTileType) => void;
   setRowTile: (rowIndex: number, tileIndex: number, tile: TileType) => void;
@@ -46,6 +48,7 @@ const defaultRows = Array.from({ length: ROWS_COUNT }, () =>
 );
 
 const defaultControllerData: ControllerDataType = {
+  initialized: false,
   gameState: GameState.Active,
   activeTile: [0, 0],
   rows: defaultRows,
@@ -53,6 +56,7 @@ const defaultControllerData: ControllerDataType = {
 
 const defaultControllerValue = {
   ...defaultControllerData,
+  setInitialized: () => {},
   setGameState: () => {},
   setActiveTile: () => {},
   setRowTile: () => {},
@@ -67,6 +71,10 @@ export const ControllerContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const [storedInitialized, setStoredInitialized] = useLocalStorage(
+    'initialized',
+    false
+  );
   const [storedGameState, setStoredGameState] = useLocalStorage(
     'game-state',
     GameState.Active
@@ -80,6 +88,8 @@ export const ControllerContextProvider = ({
     defaultControllerData.rows
   );
 
+  const [initialized, setInitialized] =
+    useState<ControllerDataType['initialized']>(storedInitialized);
   const [gameState, setGameState] =
     useState<ControllerDataType['gameState']>(storedGameState);
   const [activeTile, setActiveTile] =
@@ -87,8 +97,16 @@ export const ControllerContextProvider = ({
   const [rows, setRows] =
     React.useState<ControllerDataType['rows']>(storedRows);
 
+  const _setInitialized = useCallback(
+    (isInitialized: ControllerDataType['initialized']) => {
+      setStoredInitialized(isInitialized);
+      setInitialized(isInitialized);
+    },
+    [setStoredInitialized]
+  );
+
   const _setGameState = useCallback(
-    (newState: GameState) => {
+    (newState: ControllerDataType['gameState']) => {
       setStoredGameState(newState);
       setGameState(newState);
     },
@@ -132,12 +150,14 @@ export const ControllerContextProvider = ({
   return (
     <ControllerContext.Provider
       value={{
+        initialized,
         gameState,
-        setGameState: _setGameState,
         activeTile,
         rows,
-        setActiveTile: _setActiveTile,
         setRowTile,
+        setInitialized: _setInitialized,
+        setGameState: _setGameState,
+        setActiveTile: _setActiveTile,
       }}
     >
       {children}
