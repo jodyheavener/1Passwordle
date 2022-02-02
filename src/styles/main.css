@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-display: swap;
+  font-family: 'Averta OP';
+  font-style: normal;
+  font-weight: 500;
+  src: url(./fonts/averta-op-regular-v1.woff2) format('woff2'),
+    url(./fonts/averta-op-regular-v1.woff) format('woff');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Averta OP';
+  font-style: italic;
+  font-weight: 500;
+  src: url(./fonts/averta-op-regularitalic-v1.woff2) format('woff2'),
+    url(./fonts/averta-op-regularitalic-v1.woff) format('woff');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Averta OP';
+  font-style: normal;
+  font-weight: 600;
+  src: url(./fonts/averta-op-semibold-v1.woff2) format('woff2'),
+    url(./fonts/averta-op-semibold-v1.woff) format('woff');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Averta OP';
+  font-style: normal;
+  font-weight: 700;
+  src: url(./fonts/averta-op-bold-v1.woff2) format('woff2'),
+    url(./fonts/averta-op-bold-v1.woff) format('woff');
+}
