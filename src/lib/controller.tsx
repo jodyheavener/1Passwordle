@@ -10,6 +10,12 @@ export enum TileState {
   Hidden,
 }
 
+export enum GameState {
+  Active,
+  Won,
+  Lost,
+}
+
 export type TileType = {
   state: TileState;
   character?: string;
@@ -20,13 +26,13 @@ export type RowTileType = [row: number, tile: number];
 type RowType = TileType[];
 
 type ControllerDataType = {
-  boardEnabled: boolean;
+  gameState: GameState;
   activeTile: RowTileType;
   rows: RowType[];
 };
 
 type ControllerActionsType = {
-  setBoardEnabled: (enabled: boolean) => void;
+  setGameState: (state: GameState) => void;
   setActiveTile: (activeTile: RowTileType) => void;
   setRowTile: (rowIndex: number, tileIndex: number, tile: TileType) => void;
 };
@@ -86,14 +92,14 @@ const defaultRows = Array.from({ length: ROWS_COUNT }, () =>
 // ];
 
 const defaultControllerData: ControllerDataType = {
-  boardEnabled: false,
+  gameState: GameState.Active,
   activeTile: [0, 0],
   rows: defaultRows,
 };
 
 const defaultControllerValue = {
   ...defaultControllerData,
-  setBoardEnabled: () => {},
+  setGameState: () => {},
   setActiveTile: () => {},
   setRowTile: () => {},
 };
@@ -107,7 +113,7 @@ export const ControllerContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [boardEnabled, setBoardEnabled] = useState<boolean>(true);
+  const [gameState, setGameState] = useState<GameState>(GameState.Active);
   const [activeTile, setActiveTile] = React.useState<
     ControllerDataType['activeTile']
   >(defaultControllerData.activeTile);
@@ -128,8 +134,8 @@ export const ControllerContextProvider = ({
   return (
     <ControllerContext.Provider
       value={{
-        boardEnabled,
-        setBoardEnabled,
+        gameState,
+        setGameState,
         activeTile,
         rows,
         setActiveTile,

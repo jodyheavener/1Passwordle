@@ -9,7 +9,7 @@ const keyboardRows = [
 ];
 
 const Keyboard = () => {
-  const { onKeyActivated, onBackspace, onEnter } = useKeyboard();
+  const { onKeyActivated, onBackspace, onEnter, keyStates } = useKeyboard();
 
   return (
     <div className="w-full max-w-lg mx-auto mb-3">
@@ -18,6 +18,7 @@ const Keyboard = () => {
           {row.map((character, index) => (
             <Key
               key={`${character}-${index}`}
+              state={keyStates[character] || null}
               {...{ character, onKeyActivated, onBackspace, onEnter }}
             />
           ))}

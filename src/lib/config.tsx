@@ -7,6 +7,7 @@ type ConfigType = {
   active: boolean;
   loading: boolean;
   totalWords: number;
+  wordsRemaining: number;
   currentWord: string;
 };
 
@@ -14,6 +15,7 @@ const defaultConfigValue = {
   active: false,
   loading: true,
   totalWords: words.length,
+  wordsRemaining: 0,
   currentWord: '',
 };
 
@@ -30,6 +32,7 @@ export const ConfigContextProvider = ({
     const daysSinceStart = daysSinceDate(START_DATE);
     const newValue = {
       loading: false,
+      wordsRemaining: words.length - daysSinceStart,
     };
 
     if (daysSinceStart < words.length - 1) {

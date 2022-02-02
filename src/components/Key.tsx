@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import React from 'react';
+import { TileState } from '../lib/controller';
 
 const defaultClasses =
   'bg-lily-lavender dark:bg-kuretake-black-manga text-kuretake-black-manga dark:text-white rounded-lg uppercase';
@@ -9,11 +10,13 @@ const Key = ({
   onKeyActivated,
   onEnter,
   onBackspace,
+  state,
 }: {
   character: string;
   onKeyActivated: (character: string) => void;
   onEnter: () => void;
   onBackspace: () => void;
+  state: TileState | null;
 }) => {
   switch (character) {
     case 'SPACE':
@@ -23,7 +26,7 @@ const Key = ({
     case 'DELETE':
       return <Backspace {...{ onBackspace }} />;
     default:
-      return <Character {...{ character, onKeyActivated }} />;
+      return <Character {...{ character, state, onKeyActivated }} />;
   }
 };
 
@@ -31,11 +34,19 @@ const Spacer = () => <div className="w-5"></div>;
 
 const Character = ({
   character,
+  state,
   onKeyActivated,
-}: Pick<React.ComponentProps<typeof Key>, 'character' | 'onKeyActivated'>) => (
+}: Pick<
+  React.ComponentProps<typeof Key>,
+  'character' | 'state' | 'onKeyActivated'
+>) => (
   <button
     className={clsx(
       defaultClasses,
+      state === TileState.Absent && 'bg-grey-frost dark:bg-rhapsody-in-blue',
+      state === TileState.Present && 'bg-clementine dark:bg-clementine',
+      state === TileState.Exact &&
+        'bg-sonata-green-minor dark:bg-sonata-green-minor',
       'text-xl md:text-2xl flex-1 mx-0.5 md:mx-1 py-3 '
     )}
     onClick={() => onKeyActivated(character)}

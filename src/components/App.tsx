@@ -1,9 +1,15 @@
 import React from 'react';
 import { ConfigContextProvider, useConfig } from '../lib/config';
-import { ControllerContextProvider } from '../lib/controller';
+import { COMPLETED_URL } from '../lib/constants';
+import {
+  ControllerContextProvider,
+  GameState,
+  useController,
+} from '../lib/controller';
 import Board from './Board';
 import Header from './Header';
 import Keyboard from './Keyboard';
+import Modal from './Modal';
 
 const messageClasses =
   'flex items-center justify-center h-full text-lg text-kuretake-black-manga dark:text-white';
@@ -41,9 +47,59 @@ const AppPresentation = () => {
       <ControllerContextProvider>
         <Board />
         <Keyboard />
+        <Outcomes />
       </ControllerContextProvider>
     );
   }
+};
+
+const Outcomes = () => {
+  const { gameState } = useController();
+
+  if (gameState === GameState.Won) {
+    return <WonModal />;
+  } else if (gameState === GameState.Lost) {
+    return <LostModal />;
+  }
+
+  return null;
+};
+
+const WonModal = () => {
+  const { wordsRemaining } = useConfig();
+
+  return (
+    <Modal>
+      <h2 className="font-semibold text-3xl mb-2">You did it! 🎉</h2>
+      <p>
+        Congratulations on solving today's word. Don't forget to come back
+        tomorrow for the next word! There are still{' '}
+        <b>{wordsRemaining} words</b> left.
+      </p>
+      <p className="mt-2 mb-4">Now you should head to the next puzzle:</p>
+      <a
+        href={COMPLETED_URL}
+        target="_blank"
+        rel="noreferrer"
+        className="bg-white dark:bg-thalassophile text-kuretake-black-manga rounded-full text-lg font-semibold py-2 px-4 block"
+      >
+        Let's go!
+      </a>
+    </Modal>
+  );
+};
+
+const LostModal = () => {
+  const { wordsRemaining } = useConfig();
+  return (
+    <Modal>
+      <h2 className="font-semibold text-3xl mb-2">Sorry, you lost ☹️</h2>
+      <p>But don't worry - you can try again with tomorrow's word!</p>
+      <p className="mt-2">
+        There are still <b>{wordsRemaining} words</b> left.
+      </p>
+    </Modal>
+  );
 };
 
 export default App;

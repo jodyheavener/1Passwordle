@@ -1,9 +1,9 @@
 import React from 'react';
-import { useController } from '../lib/controller';
+import { GameState, useController } from '../lib/controller';
 import Tile from './Tile';
 
 const Board = () => {
-  const { rows } = useController();
+  const { rows, activeTile, gameState } = useController();
 
   return (
     <div
@@ -13,10 +13,15 @@ const Board = () => {
       {rows.map((row, rowIndex) => (
         <div
           key={rowIndex}
-          className="flex flex-row flex-1 justify-between my-1 md:my-1.5 mx-2 md:mx-0"
+          className="flex flex-row flex-1 justify-between my-1 md:my-1.5 px-2 md:px-0 relative"
         >
           {row.map((tile, tileIndex) => (
-            <Tile key={`${rowIndex}-${tileIndex}`} {...{ tile }} />
+            <React.Fragment key={`${rowIndex}-${tileIndex}`}>
+              {gameState === GameState.Active && activeTile[0] === rowIndex && (
+                <div className="absolute left-0 top-1 bottom-1 bg-bits-blue dark:bg-white dark:bg-opacity-10 w-0.5 sm:w-1 rounded-r sm:rounded sm:top-2 sm:bottom-2 sm:-left-2" />
+              )}
+              <Tile {...{ tile }} />
+            </React.Fragment>
           ))}
         </div>
       ))}

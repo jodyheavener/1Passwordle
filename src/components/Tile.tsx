@@ -10,10 +10,10 @@ const Tile = ({ tile: { state, character } }: { tile: TileType }) => (
       state === TileState.Submitted && 'text-soft-navy dark:text-white',
       state === TileState.Absent &&
         'bg-soft-navy dark:bg-rhapsody-in-blue border-transparent',
-      state === TileState.Hidden &&
-        'bg-soft-navy dark:bg-rhapsody-in-blue border-transparent',
       state === TileState.Present && 'bg-clementine border-transparent',
-      state === TileState.Exact && 'bg-sonata-green-minor border-transparent'
+      state === TileState.Exact && 'bg-sonata-green-minor border-transparent',
+      state === TileState.Hidden &&
+        'bg-soft-navy dark:bg-rhapsody-in-blue border-transparent'
     )}
   >
     <span className={clsx(state === TileState.Hidden && 'text-5xl h-7')}>

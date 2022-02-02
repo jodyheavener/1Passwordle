@@ -25,6 +25,7 @@ module.exports = {
       'clementine': '#eb7100',
       'lily-lavender': '#E6E6E8',
       'grey-frost': '#B9BDC2',
+      'thalassophile': '#41afe8'
     },
   },
   plugins: [],

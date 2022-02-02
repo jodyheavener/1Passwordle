@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useConfig } from './config';
 import { ROWS_COUNT, TILES_COUNT } from './constants';
-import { TileState, TileType, useController } from './controller';
+import { GameState, TileState, TileType, useController } from './controller';
 
 const useKeyboard = () => {
   const { currentWord } = useConfig();
   const {
-    boardEnabled,
-    setBoardEnabled,
+    gameState,
+    setGameState,
     setRowTile,
     setActiveTile,
     activeTile,
@@ -15,13 +15,50 @@ const useKeyboard = () => {
   } = useController();
   const [atEnd, setAtEnd] = useState<boolean>(false);
 
+  // TODO: this is awful and I'm in a rush
+  const keyStates = useMemo(() => {
+    const keys: { [key: string]: TileState } = {};
+
+    rows.forEach((row) => {
+      row.forEach((tile) => {
+        if (tile.state === TileState.Exact) {
+          keys[tile.character!] = TileState.Exact;
+        }
+        if (tile.state === TileState.Absent) {
+          keys[tile.character!] = TileState.Absent;
+        }
+        if (tile.state === TileState.Present) {
+          keys[tile.character!] = TileState.Present;
+        }
+      });
+    });
+
+    return keys;
+  }, [rows]);
+
+  // TODO: this is awful and I'm in a rush
+  const obfuscateRows = useCallback(() => {
+    const [currentRow] = activeTile;
+    const rowsToChange = rows.slice(0, Math.max(currentRow - 1, 0));
+    rowsToChange.forEach((row, rowIndex) => {
+      row.forEach((tile, tileIndex) => {
+        if (tile.state === TileState.Absent) {
+          setRowTile(rowIndex, tileIndex, {
+            ...tile,
+            state: TileState.Hidden,
+          });
+        }
+      });
+    });
+  }, [activeTile, rows, setRowTile]);
+
   const onEnter = useCallback(() => {
     const [currentRow] = activeTile;
     const rowTiles = rows[currentRow];
     const currentLetters = currentWord.split('');
     let isWinning = true;
 
-    if (!boardEnabled || !atEnd) {
+    if (gameState !== GameState.Active || !atEnd) {
       return;
     }
 
@@ -44,23 +81,23 @@ const useKeyboard = () => {
     }
 
     if (isWinning) {
-      console.log('You win!');
-      setBoardEnabled(false);
+      setGameState(GameState.Won);
     } else if (currentRow === ROWS_COUNT - 1) {
-      console.log('You lose!');
-      setBoardEnabled(false);
+      setGameState(GameState.Lost);
     } else {
       setActiveTile([currentRow + 1, 0]);
+      obfuscateRows();
       setAtEnd(false);
     }
   }, [
     activeTile,
     atEnd,
-    boardEnabled,
     currentWord,
+    gameState,
+    obfuscateRows,
     rows,
     setActiveTile,
-    setBoardEnabled,
+    setGameState,
     setRowTile,
   ]);
 
@@ -68,7 +105,7 @@ const useKeyboard = () => {
     const [activeRow, activeCell] = activeTile;
     const nextCell = atEnd ? activeCell : activeCell - 1;
 
-    if (!boardEnabled) {
+    if (gameState !== GameState.Active) {
       return;
     }
 
@@ -79,13 +116,13 @@ const useKeyboard = () => {
     if (nextCell >= 0) {
       setActiveTile([activeRow, nextCell]);
     }
-  }, [activeTile, atEnd, boardEnabled, setActiveTile, setRowTile]);
+  }, [activeTile, atEnd, gameState, setActiveTile, setRowTile]);
 
   const onKeyActivated = useCallback(
     (character: string) => {
       const [activeRow, activeCell] = activeTile;
 
-      if (!boardEnabled || atEnd) {
+      if (gameState !== GameState.Active || atEnd) {
         return;
       }
 
@@ -100,7 +137,7 @@ const useKeyboard = () => {
         setActiveTile([activeRow, activeCell + 1]);
       }
     },
-    [activeTile, boardEnabled, atEnd, setRowTile, setActiveTile]
+    [activeTile, gameState, atEnd, setRowTile, setActiveTile]
   );
 
   useEffect(() => {
@@ -118,7 +155,7 @@ const useKeyboard = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onBackspace, onEnter, onKeyActivated]);
 
-  return { onEnter, onBackspace, onKeyActivated };
+  return { onEnter, onBackspace, onKeyActivated, keyStates };
 };
 
 export default useKeyboard;
