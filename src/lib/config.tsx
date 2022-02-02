@@ -14,7 +14,7 @@ const defaultConfigValue = {
   active: false,
   loading: true,
   totalWords: words.length,
-  currentWord: 'WORD_NOT_SET',
+  currentWord: '',
 };
 
 const ConfigContext = React.createContext<ConfigType>(defaultConfigValue);

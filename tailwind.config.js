@@ -8,6 +8,8 @@ module.exports = {
     colors: {
       // standard
       white: '#fff',
+      black: '#000',
+      transparent: 'transparent',
 
       // brand
       'bits-blue': '#0572EC',
@@ -18,6 +20,11 @@ module.exports = {
       // https://colornamer.robertcooper.me/
       'kodama-white': '#e8f3ff',
       'kuretake-black-manga': '#051627',
+      'rhapsody-in-blue': '#08243e',
+      'sonata-green-minor': '#50b347',
+      'clementine': '#eb7100',
+      'lily-lavender': '#E6E6E8',
+      'grey-frost': '#B9BDC2',
     },
   },
   plugins: [],
