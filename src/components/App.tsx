@@ -92,19 +92,22 @@ const WelcomeModal = () => {
 };
 
 const WonModal = () => {
-  const { wordsRemaining } = useConfig();
+  const { wordsRemaining, currentWord } = useConfig();
 
   return (
     <Modal>
       <h2 className="font-semibold text-3xl mb-2">You did it! 🎉</h2>
       <p>
-        Congratulations on solving today's word. Don't forget to come back
-        tomorrow for the next word!
+        Congratulations on solving today's word, "
+        <b>{currentWord.toUpperCase()}</b>". Don't forget to come back tomorrow
+        for the next word!
       </p>
       <p className="mt-2">
         There are still <b>{wordsRemaining} words</b> left.
       </p>
-      <p className="mt-2 mb-4">Now you should head to the next puzzle:</p>
+      <p className="mt-2 mb-4">
+        This is <b>puzzle 10/13</b>, now you should head to the next puzzle:
+      </p>
       <a
         href={COMPLETED_URL}
         target="_blank"
