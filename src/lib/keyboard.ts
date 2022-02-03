@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useConfig } from './config';
 import { ROWS_COUNT, TILES_COUNT } from './constants';
 import { GameState, TileState, TileType, useController } from './controller';
 import dictionary from './dictionary.json';
+import { rightNow } from './utils';
 
 const useKeyboard = () => {
   const { currentWord } = useConfig();
@@ -13,8 +14,10 @@ const useKeyboard = () => {
     setActiveTile,
     activeTile,
     rows,
+    setLastPlayedAt,
+    atRowEnd,
+    setAtRowEnd,
   } = useController();
-  const [atEnd, setAtEnd] = useState<boolean>(false);
 
   // TODO: this is awful and I'm in a rush
   const keyStates = useMemo(() => {
@@ -59,9 +62,11 @@ const useKeyboard = () => {
     const currentLetters = currentWord.split('');
     let isWinning = true;
 
-    if (gameState !== GameState.Active || !atEnd) {
+    if (gameState !== GameState.Active || !atRowEnd) {
       return;
     }
+
+    setLastPlayedAt(rightNow());
 
     const submittedWord = rowTiles.map((tile) => tile.character).join('');
     if (!dictionary.includes(submittedWord)) {
@@ -93,44 +98,58 @@ const useKeyboard = () => {
     } else {
       setActiveTile([currentRow + 1, 0]);
       obfuscateRows();
-      setAtEnd(false);
+      setAtRowEnd(false);
     }
   }, [
     activeTile,
-    atEnd,
+    atRowEnd,
     currentWord,
     gameState,
     obfuscateRows,
     rows,
     setActiveTile,
+    setAtRowEnd,
     setGameState,
+    setLastPlayedAt,
     setRowTile,
   ]);
 
   const onBackspace = useCallback(() => {
     const [activeRow, activeCell] = activeTile;
-    const nextCell = atEnd ? activeCell : activeCell - 1;
+    const nextCell = atRowEnd ? activeCell : activeCell - 1;
 
     if (gameState !== GameState.Active) {
       return;
     }
 
+    setLastPlayedAt(rightNow());
+
     setRowTile(activeRow, nextCell, {
       state: TileState.Empty,
     } as TileType);
-    setAtEnd(false);
+    setAtRowEnd(false);
     if (nextCell >= 0) {
       setActiveTile([activeRow, nextCell]);
     }
-  }, [activeTile, atEnd, gameState, setActiveTile, setRowTile]);
+  }, [
+    activeTile,
+    atRowEnd,
+    gameState,
+    setActiveTile,
+    setAtRowEnd,
+    setLastPlayedAt,
+    setRowTile,
+  ]);
 
   const onKeyActivated = useCallback(
     (character: string) => {
       const [activeRow, activeCell] = activeTile;
 
-      if (gameState !== GameState.Active || atEnd) {
+      if (gameState !== GameState.Active || atRowEnd) {
         return;
       }
+
+      setLastPlayedAt(rightNow());
 
       setRowTile(activeRow, activeCell, {
         state: TileState.Submitted,
@@ -138,12 +157,20 @@ const useKeyboard = () => {
       } as TileType);
 
       if (activeCell === TILES_COUNT - 1) {
-        setAtEnd(true);
+        setAtRowEnd(true);
       } else if (activeCell < TILES_COUNT - 1) {
         setActiveTile([activeRow, activeCell + 1]);
       }
     },
-    [activeTile, gameState, atEnd, setRowTile, setActiveTile]
+    [
+      activeTile,
+      gameState,
+      atRowEnd,
+      setLastPlayedAt,
+      setRowTile,
+      setAtRowEnd,
+      setActiveTile,
+    ]
   );
 
   useEffect(() => {

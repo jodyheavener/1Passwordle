@@ -1,6 +1,7 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { ROWS_COUNT, TILES_COUNT } from './constants';
 import { useLocaleState } from './storage';
+import { datesEqual } from './utils';
 
 export enum TileState {
   Empty,
@@ -28,15 +29,19 @@ type RowType = TileType[];
 
 type ControllerDataType = {
   initialized: boolean;
+  lastPlayedAt: number | null;
   gameState: GameState;
   activeTile: RowTileType;
+  atRowEnd: boolean;
   rows: RowType[];
 };
 
 type ControllerActionsType = {
   setInitialized: (initialized: boolean) => void;
+  setLastPlayedAt: (timestamp: number) => void;
   setGameState: (state: GameState) => void;
   setActiveTile: (activeTile: RowTileType) => void;
+  setAtRowEnd: (atEnd: boolean) => void;
   setRowTile: (rowIndex: number, tileIndex: number, tile: TileType) => void;
 };
 
@@ -49,16 +54,20 @@ const defaultRows = Array.from({ length: ROWS_COUNT }, () =>
 
 const defaultControllerData: ControllerDataType = {
   initialized: false,
+  lastPlayedAt: 0,
   gameState: GameState.Active,
   activeTile: [0, 0],
+  atRowEnd: false,
   rows: defaultRows,
 };
 
 const defaultControllerValue = {
   ...defaultControllerData,
   setInitialized: () => {},
+  setLastPlayedAt: () => {},
   setGameState: () => {},
   setActiveTile: () => {},
+  setAtRowEnd: () => {},
   setRowTile: () => {},
 };
 
@@ -74,12 +83,18 @@ export const ControllerContextProvider = ({
   const [initialized, setInitialized] = useLocaleState<
     ControllerDataType['initialized']
   >('initialized', false);
+  const [lastPlayedAt, setLastPlayedAt] = useLocaleState<
+    ControllerDataType['lastPlayedAt']
+  >('last-played-at', null);
   const [gameState, setGameState] = useLocaleState<
     ControllerDataType['gameState']
   >('game-state', GameState.Active);
   const [activeTile, setActiveTile] = useLocaleState<
     ControllerDataType['activeTile']
   >('active-tile', defaultControllerData.activeTile);
+  const [atRowEnd, setAtRowEnd] = useLocaleState<
+    ControllerDataType['atRowEnd']
+  >('at-row-end', false);
   const [rows, setRows] = useLocaleState<ControllerDataType['rows']>(
     'rows-data',
     defaultControllerData.rows
@@ -95,17 +110,33 @@ export const ControllerContextProvider = ({
     [setRows]
   );
 
+  useEffect(() => {
+    if (lastPlayedAt) {
+      const today = new Date();
+      const lastPlayed = new Date(lastPlayedAt);
+      if (!datesEqual(today, lastPlayed)) {
+        setGameState(GameState.Active);
+        setLastPlayedAt(null);
+        setRows(defaultRows);
+      }
+    }
+  }, [lastPlayedAt, setGameState, setLastPlayedAt, setRows]);
+
   return (
     <ControllerContext.Provider
       value={{
         initialized,
+        lastPlayedAt,
         gameState,
         activeTile,
+        atRowEnd,
         rows,
         setRowTile,
         setInitialized,
+        setLastPlayedAt,
         setGameState,
         setActiveTile,
+        setAtRowEnd,
       }}
     >
       {children}
