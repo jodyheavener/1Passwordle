@@ -118,9 +118,10 @@ export const ControllerContextProvider = ({
         setGameState(GameState.Active);
         setLastPlayedAt(null);
         setRows(defaultRows);
+        setAtRowEnd(false);
       }
     }
-  }, [lastPlayedAt, setGameState, setLastPlayedAt, setRows]);
+  }, [lastPlayedAt, setAtRowEnd, setGameState, setLastPlayedAt, setRows]);
 
   return (
     <ControllerContext.Provider
