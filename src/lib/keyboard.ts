@@ -4,6 +4,7 @@ import { ROWS_COUNT, TILES_COUNT } from './constants';
 import { GameState, TileState, TileType, useController } from './controller';
 import dictionary from './dictionary.json';
 import { rightNow } from './utils';
+import words from './words.json';
 
 const useKeyboard = () => {
   const { currentWord } = useConfig();
@@ -69,8 +70,8 @@ const useKeyboard = () => {
     setLastPlayedAt(rightNow());
 
     const submittedWord = rowTiles.map((tile) => tile.character).join('');
-    if (!dictionary.includes(submittedWord)) {
-      return alert("Sorry, that's not a valid word.");
+    if (!dictionary.concat(words).includes(submittedWord)) {
+      return alert("Sorry, this dumb game doesn't know that word.");
     }
 
     for (let index = 0; index < rowTiles.length; index++) {
