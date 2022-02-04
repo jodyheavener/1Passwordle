@@ -117,11 +117,19 @@ export const ControllerContextProvider = ({
       if (!datesEqual(today, lastPlayed)) {
         setGameState(GameState.Active);
         setLastPlayedAt(null);
+        setActiveTile([0, 0]);
         setRows(defaultRows);
         setAtRowEnd(false);
       }
     }
-  }, [lastPlayedAt, setAtRowEnd, setGameState, setLastPlayedAt, setRows]);
+  }, [
+    lastPlayedAt,
+    setActiveTile,
+    setAtRowEnd,
+    setGameState,
+    setLastPlayedAt,
+    setRows,
+  ]);
 
   return (
     <ControllerContext.Provider

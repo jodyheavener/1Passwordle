@@ -1,9 +1,10 @@
 import { useCallback, useState } from 'react';
+import { STORAGE_KEY } from './constants';
 
 const useLocalStorage = (key: string, initialValue: any) => {
   const [storedValue, setStoredValue] = useState(() => {
     try {
-      const item = window.localStorage.getItem(key);
+      const item = window.localStorage.getItem(`${STORAGE_KEY}/${key}`);
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
       console.log(error);
@@ -16,7 +17,10 @@ const useLocalStorage = (key: string, initialValue: any) => {
       const valueToStore =
         value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      window.localStorage.setItem(
+        `${STORAGE_KEY}/${key}`,
+        JSON.stringify(valueToStore)
+      );
     } catch (error) {
       console.log(error);
     }
